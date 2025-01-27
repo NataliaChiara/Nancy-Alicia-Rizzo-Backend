@@ -11,24 +11,18 @@ console.log("Escuchando el puerto " + app.get("port"));
 
 // middlewares
 app.use(cors({
-  origin: ["http://127.0.0.1:5500"]
+  origin: ["http://localhost:3000"]
 }))
 app.use(morgan("dev"));
+app.use(express.json({
+  limit: '10mb' // Aumentamos el límite para manejar imágenes en base64
+}));
 
 // rutas
 app.get("/", async (req, res)=>{
   const connection = await database.getConnection()
-  const psicologo = await connection.query(`
-    SELECT * from psicologo
+  const products = await connection.query(`
+    SELECT * from products
   `)
-  const servicios = await connection.query(`
-    SELECT * from servicios
-  `)
-  const terapias = await connection.query(`
-    SELECT * from terapias
-  `)
-  const testimonios = await connection.query(`
-    SELECT * from testimonios
-  `)
-  res.json({psicologo:psicologo[0],servicios:servicios,terapias:terapias,testimonios:testimonios})
+  res.json({products})
 })
